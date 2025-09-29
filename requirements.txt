@@ -2,3 +2,4 @@ Flask
 mysql-connector-python
 azure-storage-blob
 python-dotenv
+gunicorn
