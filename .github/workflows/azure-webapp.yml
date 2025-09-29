@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.13'  # Match your Azure Web App Python version
+          python-version: '3.13'
 
       # Step 3: Install dependencies
       - name: Install dependencies
@@ -27,14 +27,21 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Step 4: Deploy to Azure Web App
+      # Step 4: Login to Azure using Service Principal
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Step 5: Deploy to Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: mywebapp  # Replace with your Azure Web App name
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-name: mywebapp          # Replace with your Azure Web App name
           package: .
 
-      # Step 5: Optional - pass secrets as env variables for runtime
-      - name: Set environment variables
-        run: echo "Secrets will be passed automatically by Azure App Settings"
+      # Step 6: (Optional) Run migrations or setup commands
+      # - name: Run migrations
+      #   run: |
+      #     python manage.py migrate  # If using Django
+      #     python app.py             # Or any setup script
